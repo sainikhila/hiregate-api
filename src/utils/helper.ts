@@ -162,6 +162,10 @@ export default class Helper {
 
             const payload = Object.assign({}, input);
 
+            if (!process.env.SECRET_KEY) {
+                return resolve('');
+            }
+
             const token = jwt.sign(payload, process.env.SECRET_KEY, {
                 algorithm: "HS256",
                 subject: payload[key].toString(),

@@ -7,6 +7,7 @@ import { RegisterRoutes } from "../build/routes";
 import { ValidateError } from "tsoa";
 import logger from './logger';
 import { ResponseCode } from "./utils/enums";
+import { applyAuthMiddleware } from './utils/protectRoute';
 
 export const app = express();
 
@@ -16,6 +17,8 @@ DbConnection.initConnection().then(() => {
     app.use(bodyParser.urlencoded({
         extended: true,
     }));
+
+    applyAuthMiddleware(app);
 
     app.use(bodyParser.json());
 
