@@ -30,7 +30,14 @@ export class AuthService implements IAuthService {
 
         let token = await this.helper.GenerateJwtToken(tokenUser, "id");
 
-        return new Token({ token: token, user: { name: tokenUser.name, userTypeId: tokenUser.userTypeId } });
+        return new Token({
+            token: token,
+            user: {
+                name: tokenUser.name,
+                userTypeId: tokenUser.userTypeId,
+                company: "Swazuna"
+            }
+        });
 
     }
 }

@@ -105,6 +105,7 @@ export class TokenUser extends BasicUser {
 export class Token {
     token: string;
     user: any;
+    company: string;
 
     constructor(init?: Partial<Token>) {
         if (init) {
@@ -112,6 +113,7 @@ export class Token {
         }
         this.token = this.token;
         this.user = this.user;
+        this.company = this.company;
     }
 
 }

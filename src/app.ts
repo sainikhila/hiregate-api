@@ -19,13 +19,8 @@ DbConnection.initConnection().then(() => {
 
     app.use(bodyParser.json());
 
-    app.use(cors({
-        origin: 'http://127.0.0.1:8080',
-        credentials: true
-    }));
-
     app.use((req: ExRequest, res: ExResponse, next: NextFunction) => {
-        res.header("Access-Control-Allow-Origin", "http://127.0.0.1:8080");
+        res.header("Access-Control-Allow-Origin", "http://localhost:8080");
         res.header("Access-Control-Allow-Credentials", "true");
         res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
         res.header("Access-Control-Expose-Headers", "Content-Length");
