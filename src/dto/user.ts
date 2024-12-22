@@ -1,4 +1,17 @@
 
+export class AuthUser {
+    email: string;
+    password: string;
+
+    constructor(init?: Partial<BasicUser>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+        this.email = this.email;
+        this.password = this.password;
+    }
+}
+
 
 export class BasicUser {
     name: string;
@@ -68,6 +81,37 @@ export class UpdateUser extends BasicUser {
         this.gender = this.gender;
         this.dailingCode = this.dailingCode;
         this.recordStatus = this.recordStatus;
+    }
+
+}
+
+export class TokenUser extends BasicUser {
+    id: string;
+    companyId: string;
+    recordStatus?: number;
+
+    constructor(init?: Partial<UpdateUser>) {
+        super(init);
+        if (init) {
+            Object.assign(this, init);
+        }
+        this.id = this.id;
+        this.companyId = this.companyId;
+        this.recordStatus = this.recordStatus;
+    }
+
+}
+
+export class Token {
+    token: string;
+    user: any;
+
+    constructor(init?: Partial<Token>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+        this.token = this.token;
+        this.user = this.user;
     }
 
 }

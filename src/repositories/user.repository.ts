@@ -74,6 +74,13 @@ export interface IUserRepository {
      * @returns A promise that resolves to the count of user schemas.
      */
     searchCount(search: Search): Promise<number>;
+
+    /**
+     * Retrieves a user schema by its email.
+     * @param email - The email of the user schema to retrieve.
+     * @returns A promise that resolves to the retrieved user schema.
+     */
+    getUserByEmail(email: string): Promise<IUserSchema>;
 }
 
 /**
@@ -176,6 +183,26 @@ export class UserRepository implements IUserRepository {
         exclude?.forEach((e: string) => { excludes[e] = 0; });
 
         return await UserSchema.find({ _id }, excludes)
+            .then((data: any) => {
+                let results = this.helper.GetItemFromArray(data, 0, {});
+                return results as IUserSchema;
+            })
+            .catch((error: Error) => {
+                throw error;
+            });
+
+    }
+
+    /**
+     * Retrieves a user schema by its email.
+     * @param email - The email of the user schema to retrieve.
+     * @returns A promise that resolves to the retrieved user schema.
+     */
+    public async getUserByEmail(email: string): Promise<IUserSchema> {
+
+        let excludes: any = { __v: 0 };
+
+        return await UserSchema.find({ email: { $regex: email, $options: 'i' } }, excludes)
             .then((data: any) => {
                 let results = this.helper.GetItemFromArray(data, 0, {});
                 return results as IUserSchema;

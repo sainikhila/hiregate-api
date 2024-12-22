@@ -1,6 +1,7 @@
 const Types = require('mongoose').Types;
 import { provideSingleton } from "../utils/provideSingleton";
 import mongoose from 'mongoose';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 @provideSingleton(Helper)
 export default class Helper {
@@ -151,4 +152,23 @@ export default class Helper {
     public toString = (id: any): string => {
         return id.toString();
     }
+
+    public async GenerateJwtToken(input: any, key: string): Promise<string> {
+        return new Promise(async (resolve) => {
+
+            const SESSION_TIMOUT: number = parseInt(process.env.SESSION_TIMOUT || '60000', 0);
+
+            let expired = SESSION_TIMOUT * 60;
+
+            const payload = Object.assign({}, input);
+
+            const token = jwt.sign(payload, process.env.SECRET_KEY, {
+                algorithm: "HS256",
+                subject: payload[key].toString(),
+                expiresIn: expired,
+            });
+
+            return resolve(token);
+        });
+    };
 }
