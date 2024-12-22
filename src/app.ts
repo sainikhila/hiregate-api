@@ -2,6 +2,7 @@
 import express, { Response as ExResponse, Request as ExRequest, NextFunction } from "express";
 import * as bodyParser from "body-parser";
 import DbConnection from "./db/db";
+import cors from 'cors';
 import { RegisterRoutes } from "../build/routes";
 import { ValidateError } from "tsoa";
 import logger from './logger';
@@ -18,8 +19,13 @@ DbConnection.initConnection().then(() => {
 
     app.use(bodyParser.json());
 
+    app.use(cors({
+        origin: 'http://127.0.0.1:8080',
+        credentials: true
+    }));
+
     app.use((req: ExRequest, res: ExResponse, next: NextFunction) => {
-        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Origin", "http://127.0.0.1:8080");
         res.header("Access-Control-Allow-Credentials", "true");
         res.header("Access-Control-Allow-Methods", "GET,HEAD,PUT,PATCH,POST,DELETE");
         res.header("Access-Control-Expose-Headers", "Content-Length");

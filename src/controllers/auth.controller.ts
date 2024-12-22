@@ -14,13 +14,15 @@ export class AuthController extends BaseController {
     constructor(@inject("IAuthService") private authService: IAuthService) { super(); }
 
     @Post("/signin")
-    public async signin(@Body() body: AuthUser): Promise<RequestResponse> {
+    public async signin(@Body() body: AuthUser): Promise<any> {
 
         try {
 
-            const results = await this.authService.signin(body);
+            return await this.authService.signin(body);
 
-            return this.sendResponse(ResponseCode.Success, "Authenticated successfully", results);
+            //const results = await this.authService.signin(body);
+
+            //return this.sendResponse(ResponseCode.Success, "Authenticated successfully", results);
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
