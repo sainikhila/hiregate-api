@@ -153,7 +153,7 @@ export default class Helper {
         return id.toString();
     }
 
-    public async GenerateJwtToken(input: any, key: string): Promise<string> {
+    public async GenerateJwtToken(input: any, key: string): Promise<any> {
         return new Promise(async (resolve) => {
 
             const SESSION_TIMOUT: number = parseInt(process.env.SESSION_TIMOUT || '60000', 0);
@@ -172,7 +172,15 @@ export default class Helper {
                 expiresIn: expired,
             });
 
-            return resolve(token);
+            return resolve({ access_token: token, expires_in: expired, token_type: "Bearer" });
         });
+    };
+
+    public Padding = (e: any, num: number): string => {
+        console.log(e);
+        if (this.IsNullValue(e)) {
+            return "".padStart(num, '0');
+        }
+        return e.toString().padStart(num, '0');
     };
 }

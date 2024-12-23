@@ -18,6 +18,11 @@ DbConnection.initConnection().then(() => {
         extended: true,
     }));
 
+    app.use(cors({
+        origin: 'http://localhost:8080',
+        credentials: true
+    }));
+
     applyAuthMiddleware(app);
 
     app.use(bodyParser.json());

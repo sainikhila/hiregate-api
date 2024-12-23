@@ -9,8 +9,12 @@ export interface IUserSchema extends Document {
     location: string;
     landline?: string;
     dailingCode?: string;
+    photo?: string;
     userTypeId: number;
+    roles: number;
     companyId: mongoose.Types.ObjectId;
+    internal: boolean,
+    timeZone: string,
     recordStatus: number;
 }
 
@@ -23,7 +27,11 @@ export const UserSchema: Schema = new Schema({
     location: { type: String, default: null },
     landline: { type: String, default: null },
     dailingCode: { type: String, default: null },
+    photo: { type: String, default: null },
     userTypeId: { type: Number, required: true },
+    roles: { type: Number, default: 0 },
+    internal: { type: Boolean, default: true },
+    timeZone: { type: String, default: null },
     companyId: { type: Schema.Types.ObjectId, ref: 'Company', required: true },
     recordStatus: { type: Number, default: 1 }
 }, {

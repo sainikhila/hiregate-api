@@ -15,10 +15,10 @@ export interface IJobSchema extends Document {
     contactPhone?: string;
     contactEmail?: string;
     published?: boolean;
-    startAt: { type: Date, default: null };
-    endAt: { type: Date, default: null };
-    publishedBy: { type: Schema.Types.ObjectId, ref: 'User' };
-    companyId: mongoose.Types.ObjectId;
+    startAt?: Date;
+    endAt?: Date;
+    publishedBy: string;
+    companyId: string;
     recordStatus?: number;
 }
 

@@ -103,17 +103,17 @@ export class TokenUser extends BasicUser {
 }
 
 export class Token {
-    token: string;
-    user: any;
-    company: string;
+    access_token: string;
+    expires_in: number;
+    token_type: string;
 
     constructor(init?: Partial<Token>) {
         if (init) {
             Object.assign(this, init);
         }
-        this.token = this.token;
-        this.user = this.user;
-        this.company = this.company;
+        this.access_token = this.access_token;
+        this.expires_in = this.expires_in;
+        this.token_type = this.token_type;
     }
 
 }

@@ -12,6 +12,7 @@ import { AuthUser, Token, TokenUser } from "../dto/user";
 
 export default interface IAuthService {
     signin(input: AuthUser): Promise<Token>;
+    getLoggedInUser(contactId: string): Promise<any>;
 }
 
 @injectable()
@@ -28,16 +29,11 @@ export class AuthService implements IAuthService {
 
         let tokenUser: TokenUser = this.helper.convertTo<IUserSchema, TokenUser>(user, new TokenUser());
 
-        let token = await this.helper.GenerateJwtToken(tokenUser, "id");
+        return await this.helper.GenerateJwtToken(tokenUser, "id");
 
-        return new Token({
-            token: token,
-            user: {
-                name: tokenUser.name,
-                userTypeId: tokenUser.userTypeId,
-                company: "Swazuna"
-            }
-        });
+    }
 
+    public async getLoggedInUser(contactId: string): Promise<any> {
+        return await this.userRepository.getLoggedInUser(contactId);
     }
 }

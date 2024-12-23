@@ -5,6 +5,7 @@ import UserSchema, { IUserSchema } from "../dao/user";
 import DbSession from "../db/dbsession";
 import { FilterBy, Pagination, Search, SearchResults, SortBy } from "../dto/search";
 import e from "express";
+import { link } from "fs";
 
 /**
  * Interface representing a user repository.
@@ -45,6 +46,15 @@ export interface IUserRepository {
      * @returns A promise that resolves to the retrieved user schema.
      */
     get(_id: string | unknown, exclude?: string[]): Promise<IUserSchema>;
+
+    /**
+     * Retrieves a user schema by its ID.
+     * @param companyId 
+     * @param userId 
+     */
+    getLoggedInUser(userId: string | unknown): Promise<any>;
+
+    getAllCompanyUser(companyId: string | unknown): Promise<any>;
 
     /**
      * Updates a user schema in the repository.
@@ -186,6 +196,127 @@ export class UserRepository implements IUserRepository {
             .then((data: any) => {
                 let results = this.helper.GetItemFromArray(data, 0, {});
                 return results as IUserSchema;
+            })
+            .catch((error: Error) => {
+                throw error;
+            });
+
+    }
+
+    public async getLoggedInUser(userId: string | unknown): Promise<any> {
+
+        let $pipeline = [
+
+            { $match: { _id: this.helper.ObjectId(userId) } },
+            {
+                $lookup: {
+                    from: "companies",
+                    localField: "companyId",
+                    foreignField: "_id",
+                    pipeline: [
+                        {
+                            $project: {
+                                name: 1,
+                                website: 1
+                            }
+                        }
+                    ],
+                    as: "company"
+                }
+            },
+            { $unwind: { path: "$company", preserveNullAndEmptyArrays: true } },
+            {
+                $project: {
+                    id: "$_id",
+                    _id: 0,
+                    name: 1,
+                    gender: 1,
+                    photo: 1,
+                    userTypeId: 1,
+                    company: "$company.name",
+                    website: "$company.website"
+                }
+            }
+
+        ];
+
+        return await UserSchema.aggregate($pipeline)
+            .then((data: any) => {
+                let results = this.helper.GetItemFromArray(data, 0, {});
+                return results as IUserSchema;
+            })
+            .catch((error: Error) => {
+                throw error;
+            });
+
+    }
+
+    public async getAllCompanyUser(companyId: string | unknown): Promise<any> {
+
+        let $pipeline = [
+
+            { $match: { companyId: this.helper.ObjectId(companyId) } },
+            {
+                $lookup: {
+                    from: "addresses",
+                    localField: "_id",
+                    foreignField: "mapId",
+                    as: "address"
+                }
+            },
+            { $unwind: { path: "$address", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: "professionals",
+                    localField: "_id",
+                    foreignField: "userId",
+                    as: "professional"
+                }
+            },
+            { $unwind: { path: "$professional", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: "skills",
+                    localField: "_id",
+                    foreignField: "userId",
+                    as: "skill"
+                }
+            },
+            { $unwind: { path: "$skill", preserveNullAndEmptyArrays: true } },
+            {
+                $project: {
+                    id: "$_id",
+                    _id: 0,
+                    name: 1,
+                    email: 1,
+                    gender: 1,
+                    dailingCode: "$address.dailingCode",
+                    mobileNumber: 1,
+                    city: "$address.city",
+                    state: "$address.state",
+                    country: "$address.country",
+                    location: { $concat: ["$address.city", " ", "$address.country"] },
+                    ctc: "$professional.ctc",
+                    ectc: "$professional.expctc",
+                    linkedIn: "$professional.linkedIn",
+                    resume: "$professional.resume",
+                    photo: 1,
+                    years: { $concat: [this.helper.Padding(8, 2), ".", this.helper.Padding(5, 2)] },
+                    internal: 1,
+                    timeZone: 1,
+                    skills: ".net, c#, angular",
+                    rating: '3',
+                    reviewsCount: '2',
+                    experience: "5 years"
+                }
+            }
+
+        ];
+
+        return await UserSchema.aggregate($pipeline)
+            .then((data: any) => {
+                let results = this.helper.GetItemFromArray(data, -1, []);
+                return results as IUserSchema[];
             })
             .catch((error: Error) => {
                 throw error;

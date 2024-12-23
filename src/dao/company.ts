@@ -9,6 +9,7 @@ export interface ICompanySchema extends Document {
     country: string;
     address: string;
     zipcode: string;
+    website: string;
     recordStatus: number;
 };
 
@@ -21,6 +22,7 @@ export const CompanySchema: Schema = new Schema({
     country: { type: String, required: true },
     address: { type: String, required: true },
     zipcode: { type: String, required: true },
+    website: { type: String, default: null },
     recordStatus: { type: Number, default: 1 }
 }, {
     timestamps: true
