@@ -3,12 +3,29 @@ export class AuthUser {
     email: string;
     password: string;
 
-    constructor(init?: Partial<BasicUser>) {
+    constructor(init?: Partial<AuthUser>) {
         if (init) {
             Object.assign(this, init);
         }
         this.email = this.email;
         this.password = this.password;
+    }
+}
+
+export class ShortUser {
+    id?: string;
+    name: string;
+    email: string;
+    mobileNumber: string;
+
+    constructor(init?: Partial<ShortUser>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+        this.id = this.id;
+        this.name = this.name;
+        this.email = this.email;
+        this.mobileNumber = this.mobileNumber;
     }
 }
 
@@ -23,10 +40,11 @@ export class BasicUser {
         if (init) {
             Object.assign(this, init);
         }
+
         this.name = this.name;
         this.email = this.email;
         this.mobileNumber = this.mobileNumber;
-        this.userTypeId = this.userTypeId
+        this.userTypeId = this.userTypeId;
     }
 }
 
@@ -75,10 +93,11 @@ export class UpdateUser extends BasicUser {
         if (init) {
             Object.assign(this, init);
         }
+
         this.password = this.password;
         this.location = this.location;
-        this.landline = this.landline;
         this.gender = this.gender;
+        this.landline = this.landline;
         this.dailingCode = this.dailingCode;
         this.recordStatus = this.recordStatus;
     }
@@ -95,6 +114,7 @@ export class TokenUser extends BasicUser {
         if (init) {
             Object.assign(this, init);
         }
+
         this.id = this.id;
         this.companyId = this.companyId;
         this.recordStatus = this.recordStatus;
@@ -111,6 +131,7 @@ export class Token {
         if (init) {
             Object.assign(this, init);
         }
+
         this.access_token = this.access_token;
         this.expires_in = this.expires_in;
         this.token_type = this.token_type;

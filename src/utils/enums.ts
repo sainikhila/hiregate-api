@@ -23,3 +23,10 @@ export enum ResponseCode {
     NotFound = 404,
     InternalServerError = 500
 }
+
+export enum JobStatus {
+    Active = 0,
+    UnPublished = 1,
+    Closed = 2,
+    Pending = 3
+}

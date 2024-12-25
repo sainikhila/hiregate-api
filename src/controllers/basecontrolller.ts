@@ -8,7 +8,7 @@ export abstract class BaseController extends Controller {
     protected sendResponse(status: ResponseCode, message: string, data: any = undefined): RequestResponse {
         this.setStatus(status);
         if (data) {
-            return { status, message, data };
+            return { status, message, Results: data };
         }
         return { status, message };
     }

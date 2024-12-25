@@ -4,9 +4,6 @@ import Helper from "../utils/helper";
 import UserSchema, { IUserSchema } from "../dao/user";
 import DbSession from "../db/dbsession";
 import { FilterBy, Pagination, Search, SearchResults, SortBy } from "../dto/search";
-import e from "express";
-import { link } from "fs";
-
 /**
  * Interface representing a user repository.
  */
@@ -54,7 +51,9 @@ export interface IUserRepository {
      */
     getLoggedInUser(userId: string | unknown): Promise<any>;
 
-    getAllCompanyUser(companyId: string | unknown): Promise<any>;
+    getAllCompanyUser(companyId: string | unknown): Promise<IUserSchema[]>;
+
+    getAllActiveCompanyUser(companyId: string | unknown, userTypeId: number): Promise<IUserSchema[]>;
 
     /**
      * Updates a user schema in the repository.
@@ -251,7 +250,31 @@ export class UserRepository implements IUserRepository {
 
     }
 
-    public async getAllCompanyUser(companyId: string | unknown): Promise<any> {
+    public async getAllCompanyUser(companyId: string | unknown): Promise<IUserSchema[]> {
+        return await UserSchema.find({ companyId }, { __v: 0 })
+            .then((data: any) => {
+                let results = this.helper.GetItemFromArray(data, -1, []);
+                return results as IUserSchema[];
+            })
+            .catch((error: Error) => {
+                throw error;
+            });
+
+    }
+
+    public async getAllActiveCompanyUser(companyId: string | unknown, userTypeId: number): Promise<IUserSchema[]> {
+        return await UserSchema.find({ companyId, recordStatus: 1 }, { __v: 0 })
+            .then((data: any) => {
+                let results = this.helper.GetItemFromArray(data, -1, []);
+                return results as IUserSchema[];
+            })
+            .catch((error: Error) => {
+                throw error;
+            });
+
+    }
+
+    /* public async getAllCompanyUser(companyId: string | unknown): Promise<any> {
 
         let $pipeline = [
 
@@ -322,7 +345,7 @@ export class UserRepository implements IUserRepository {
                 throw error;
             });
 
-    }
+    } */
 
     /**
      * Retrieves a user schema by its email.
