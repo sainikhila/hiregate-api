@@ -17,6 +17,7 @@ export class ShortUser {
     name: string;
     email: string;
     mobileNumber: string;
+    selected: boolean = false;
 
     constructor(init?: Partial<ShortUser>) {
         if (init) {
@@ -26,6 +27,7 @@ export class ShortUser {
         this.name = this.name;
         this.email = this.email;
         this.mobileNumber = this.mobileNumber;
+        this.selected = this.selected;
     }
 }
 

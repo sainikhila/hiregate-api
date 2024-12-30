@@ -2,6 +2,7 @@ const Types = require('mongoose').Types;
 import { provideSingleton } from "../utils/provideSingleton";
 import mongoose from 'mongoose';
 import jwt, { JwtPayload } from 'jsonwebtoken';
+import { Snowflake } from 'node-snowflake';
 
 @provideSingleton(Helper)
 export default class Helper {
@@ -18,6 +19,11 @@ export default class Helper {
         return false;
     }
 
+    public IsZeroNullValue(e: any): Boolean {
+        if (e === undefined || e === null || e === "" || e === "undefined" || e === '0' || e === 0) return true;
+        return false;
+    }
+
     public ChangeToExactDecimal(v: any): void {
         if (v !== null && typeof v === "object") {
             Object.entries(v).forEach(([key, value]) => {
@@ -29,6 +35,14 @@ export default class Helper {
             });
         }
     };
+
+    public TimeStamp(): string {
+        return new Date().valueOf().toString();
+    };
+
+    public UniqueId(): string {
+        return Snowflake.nextId();
+    }
 
     public IsArrayNull(e: any): Boolean {
         if (this.IsNull(e)) return true;
@@ -110,6 +124,12 @@ export default class Helper {
 
             let tValue: any = null;
             tValue = (source as any)[field];
+
+            if (field === 'id') {
+                tValue = (source as any)["_id"];
+            } else if (field === '_id') {
+                tValue = (source as any)["id"];
+            }
 
             if (this.isValidObjectId(tValue)) {
                 tValue = tValue?.toString();

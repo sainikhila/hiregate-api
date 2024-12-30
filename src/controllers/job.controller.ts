@@ -2,11 +2,10 @@ import { Get, Post, Delete, Tags, Route, Path, Body, Patch, Request } from "tsoa
 import { inject, provideSingleton } from "../utils/provideSingleton";
 import { ResponseCode, UserTypes } from "../utils/enums";
 import { BaseController } from "./basecontrolller";
-import { Response as ExResponse, Request as ExRequest } from "express";
+import { Request as ExRequest } from "express";
 import Helper from "../utils/helper";
-import { Job } from "../dto/job";
+import { Job } from "../dto/jobdetails";
 import IJobService from "../services/job.service";
-import { DefaultFeedBack } from "../dto/defafeedbacks";
 import RequestResponse from "../utils/requestResponse";
 
 @Tags("Job")
@@ -19,29 +18,17 @@ export class JobController extends BaseController {
         @inject("IJobService") private jobService: IJobService
     ) { super(); }
 
-    @Post("/setdefaultfeedbacks")
-    public async setDefaultFeedBacks(@Request() request: ExRequest, @Body() body: DefaultFeedBack[]): Promise<any> {
+
+    @Get("/getFeedBacks/{jobId}")
+    public async getFeedBacks(@Request() request: ExRequest, @Path() jobId: string): Promise<RequestResponse> {
 
         try {
 
-            await this.jobService.setDefaultFeedBacks(body);
+            const user: any = (request as any).user;
 
-            return this.sendResponse(ResponseCode.Success, "Default feedbacks set successfully");
+            const results = await this.jobService.getFeedBacks(jobId, user.companyId);
 
-        } catch (ex: any) {
-            return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
-        }
-
-    }
-
-    @Get("/getDefaultFeedBacks")
-    public async getDefaultFeedBacks(): Promise<RequestResponse> {
-
-        try {
-
-            const results = await this.jobService.getDefaultFeedBacks();
-
-            return this.sendResponse(ResponseCode.Success, "Default feedbacks retrieved successfully", results);
+            return this.sendResponse(ResponseCode.Success, "Job feedbacks retrieved successfully", results);
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
@@ -50,7 +37,7 @@ export class JobController extends BaseController {
     }
 
     @Post("/CreateNewJob")
-    public async CreateNewJob(@Request() request: ExRequest, @Body() body: any): Promise<any> {
+    public async CreateNewJob(@Request() request: ExRequest, @Body() body: any): Promise<RequestResponse> {
 
         try {
 
@@ -59,8 +46,12 @@ export class JobController extends BaseController {
             const job: Job = new Job(body);
             job.companyId = user.companyId;
             job.createdBy = user.id;
+            job.jobId = this.helper.TimeStamp();
+            job.recordStatus = 1;
 
-            return [];
+            await this.jobService.createNewJob(job);
+
+            return this.sendResponse(ResponseCode.Success, "Create new job successfully");
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
@@ -69,11 +60,14 @@ export class JobController extends BaseController {
     }
 
     @Get("/getjobheaders")
-    public async getJobHeaders(@Request() request: ExRequest): Promise<any> {
+    public async getJobHeaders(@Request() request: ExRequest): Promise<RequestResponse> {
 
         try {
             const user: any = (request as any).user;
-            return [];
+
+            const results = await this.jobService.getAllJobHeaders(user.companyId);
+
+            return this.sendResponse(ResponseCode.Success, "Company jobs are retrieved successfully", results);
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
@@ -133,38 +127,6 @@ export class JobController extends BaseController {
 
     }
 
-    @Get("/getFeedBackForJob/{jobId}")
-    public async getFeedBackForJob(@Request() request: ExRequest, @Path() jobId: string): Promise<RequestResponse> {
-
-        try {
-
-            const user: any = (request as any).user;
-            const results = await this.jobService.getFeedBackForJob(jobId, user.companyId);
-
-            return this.sendResponse(ResponseCode.Success, "Default feedbacks retrieved successfully", results);
-
-        } catch (ex: any) {
-            return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
-        }
-
-    }
-
-    @Get("/getFeedBackForNewJob")
-    public async getFeedBackForNewJob(@Request() request: ExRequest): Promise<RequestResponse> {
-
-        try {
-
-            const user: any = (request as any).user;
-            const results = await this.jobService.getFeedBackForNewJob(user.companyId);
-
-            return this.sendResponse(ResponseCode.Success, "Default feedbacks retrieved successfully", results);
-
-        } catch (ex: any) {
-            return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
-        }
-
-    }
-
     @Get("/GetJobDetails/{jobId}")
     public async GetJobDetails(@Request() request: ExRequest, @Path() jobId: string): Promise<any> {
 
@@ -207,8 +169,6 @@ export class JobController extends BaseController {
         }
 
     }
-
-
 
     @Post("/UpdateExistingJob")
     public async UpdateExistingJob(@Request() request: ExRequest, @Body() body: any): Promise<any> {

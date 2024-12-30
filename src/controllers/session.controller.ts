@@ -5,13 +5,14 @@ import { ResponseCode } from "../utils/enums";
 import { BaseController } from "./basecontrolller";
 import { AuthUser } from "../dto/user";
 import IAuthService from "../services/auth.service";
+import Helper from "src/utils/helper";
 
 @Tags("Session")
 @Route("api/session")
 @provideSingleton(SessionController)
 export class SessionController extends BaseController {
 
-    constructor() { super(); }
+    constructor(@inject("Helper") private helper: Helper) { super(); }
 
     @Post("/getsessionsbystatus")
     public async getSessionsByStatus(@Body() body: any): Promise<any> {
@@ -70,7 +71,7 @@ export class SessionController extends BaseController {
 
         try {
 
-            return [];
+            return this.helper.UniqueId();
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);

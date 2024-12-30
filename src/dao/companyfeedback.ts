@@ -1,12 +1,12 @@
 import mongoose, { Document, Schema } from "mongoose";
 
-export interface IFeedBackSchema extends Document {
+export interface ICompanyFeedBackSchema extends Document {
     title: string;
     description: string;
     companyId: string;
 }
 
-export const FeedBackSchema: Schema = new Schema({
+export const CompanyFeedBackSchema: Schema = new Schema({
     title: { type: String, default: null },
     description: { type: String, default: null },
     companyId: { type: Schema.Types.ObjectId, default: null }
@@ -14,6 +14,6 @@ export const FeedBackSchema: Schema = new Schema({
     timestamps: true
 });
 
-const schemaModal = mongoose.model<IFeedBackSchema>("FeedBack", FeedBackSchema);
+const schemaModal = mongoose.model<ICompanyFeedBackSchema>("CompanyFeedBack", CompanyFeedBackSchema);
 
 export default schemaModal;

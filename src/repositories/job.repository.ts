@@ -54,6 +54,8 @@ export interface IJobRepository {
      * @returns A promise that resolves when the deletion is complete.
      */
     delete(_id: string, session: ClientSession | undefined): Promise<void>;
+
+    getAllJobHeaders(companyId: string): Promise<IJobSchema[]>;
 }
 
 /**
@@ -180,5 +182,68 @@ export class JobRepository implements IJobRepository {
                 throw error;
             });
 
+    }
+
+    public async getAllJobHeaders(companyId: string): Promise<IJobSchema[]> {
+
+        let $match = { companyId: this.helper.ObjectId(companyId) };
+
+        let $piepline = [
+            { $match },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'createdBy',
+                    foreignField: '_id',
+                    as: 'created'
+                }
+            },
+            { $unwind: { path: "$created", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'publishedBy',
+                    foreignField: '_id',
+                    as: 'published'
+                }
+            },
+            { $unwind: { path: "$published", preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'closedBy',
+                    foreignField: '_id',
+                    as: 'closed'
+                }
+            },
+            { $unwind: { path: "$closed", preserveNullAndEmptyArrays: true } },
+            {
+                $project: {
+                    _id: 1,
+                    title: 1,
+                    jobId: 1,
+                    publishedOn: 1,
+                    isPublished: 1,
+                    isClosed: 1,
+                    closedOn: 1,
+                    publishedById: "$publishedBy",
+                    publishedBy: "$published.name",
+                    closedById: "$closedBy",
+                    closedBy: "$closed.name",
+                    createdById: "$createdBy",
+                    createdBy: "$created.name",
+                    recordStatus: 1
+                }
+            }
+        ];
+
+        return await JobSchema.aggregate($piepline)
+            .then((data: any) => {
+                let results = this.helper.GetItemFromArray(data, -1, []);
+                return results as IJobSchema[];
+            })
+            .catch((error: Error) => {
+                throw error;
+            });
     }
 }

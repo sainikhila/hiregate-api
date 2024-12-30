@@ -1,15 +1,16 @@
 import { injectable, inject } from "inversify";
-import { Error } from "mongoose";
+import { ClientSession, Error } from "mongoose";
 import Helper from "../utils/helper";
-import DefaultFeedBackSchema, { IDefaultFeedBackSchema } from "../dao/defaultfeedback";
+import CompanyFeedBackSchema, { ICompanyFeedBackSchema } from "../dao/companyfeedback";
 
 /**
  * Interface representing a repository for managing job data.
  */
-export interface IDefaultFeedBackRepository {
+export interface ICompanyFeedBackRepository {
 
-    gets(): Promise<IDefaultFeedBackSchema[]>;
-    saveMany(defaultFeedBacks: IDefaultFeedBackSchema[]): Promise<any>;
+    gets(companyId: string | undefined): Promise<ICompanyFeedBackSchema[]>;
+
+    saveMany(input: ICompanyFeedBackSchema[], session: ClientSession | undefined): Promise<ICompanyFeedBackSchema[]>;
 }
 
 /**
@@ -18,7 +19,7 @@ export interface IDefaultFeedBackRepository {
  * @description Repository class for managing job data.
  */
 @injectable()
-export class DefaultFeedBackRepository implements IDefaultFeedBackRepository {
+export class CompanyFeedBackRepository implements ICompanyFeedBackRepository {
 
     /**
      * Constructor for JobRepository.
@@ -31,12 +32,12 @@ export class DefaultFeedBackRepository implements IDefaultFeedBackRepository {
      * @param session - The database session.
      * @returns A promise that resolves to an array of job data.
      */
-    public async gets(): Promise<IDefaultFeedBackSchema[]> {
+    public async gets(companyId: string | undefined): Promise<ICompanyFeedBackSchema[]> {
 
-        return await DefaultFeedBackSchema.find({}, { __v: 0 })
+        return await CompanyFeedBackSchema.find({ companyId }, { __v: 0 })
             .then((data: any) => {
                 let results = this.helper.GetItemFromArray(data, -1, []);
-                return results as IDefaultFeedBackSchema[];
+                return results as ICompanyFeedBackSchema[];
             })
             .catch((error: Error) => {
                 throw error;
@@ -44,12 +45,12 @@ export class DefaultFeedBackRepository implements IDefaultFeedBackRepository {
 
     }
 
-    public async saveMany(defaultFeedBacks: IDefaultFeedBackSchema[]): Promise<IDefaultFeedBackSchema[]> {
+    public async saveMany(input: ICompanyFeedBackSchema[], session: ClientSession | undefined): Promise<ICompanyFeedBackSchema[]> {
 
-        return await DefaultFeedBackSchema.create(defaultFeedBacks)
+        return await CompanyFeedBackSchema.create(input, { session })
             .then((data: any) => {
                 let results = this.helper.GetItemFromArray(data, -1, []);
-                return results as IDefaultFeedBackSchema[];
+                return results as ICompanyFeedBackSchema[];
             })
             .catch((error: Error) => {
                 throw error;

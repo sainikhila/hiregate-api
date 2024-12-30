@@ -2,29 +2,117 @@
 
 export class Job {
 
-    jobId?: number;
-    jobTitle: string;
-    createdBy?: string;
+    id?: number;
+    jobId: string;
+    title: string;
+    description: string;
+    responsibilities?: string;
+    qualification?: string;
+    skills?: string;
+    country?: string;
+    locations?: string;
+    maxSalary?: number;
+    minSalary?: number;
+    maxExperience?: number;
+    minExperience?: number;
+    contactName?: string;
+    contactPhone?: string;
+    contactEmail?: string;
+    isPublished?: boolean;
     publishedOn?: Date;
+    isClosed?: boolean;
     closedOn?: Date;
-    recordStatus?: number;
-    companyId?: string;
-    publishToFaceIt: boolean = false;
+    startAt?: Date;
+    endAt?: Date;
+    publishedBy?: string;
+    publishedById?: string;
+    closedBy?: string;
+    closedById?: string;
+    createdBy?: string;
+    createdById?: string;
+    companyId: string;
+    recordStatus: number = 1;
+    jobAssignees: JobAssign[];
+    jobRatingParams: JobRatingParam[];
 
     constructor(init?: Partial<Job>) {
         if (init) {
             Object.assign(this, init);
         }
+        this.id = this.id;
         this.jobId = this.jobId;
-        this.jobTitle = this.jobTitle;
-        this.createdBy = this.createdBy;
+        this.title = this.title;
+        this.description = this.description;
+        this.responsibilities = this.responsibilities;
+        this.qualification = this.qualification;
+        this.skills = this.skills;
+        this.country = this.country;
+        this.locations = this.locations;
+        this.maxSalary = this.maxSalary;
+        this.minSalary = this.minSalary;
+        this.maxExperience = this.maxExperience;
+        this.minExperience = this.minExperience;
+        this.contactName = this.contactName;
+        this.contactPhone = this.contactPhone;
+        this.contactEmail = this.contactEmail;
+        this.isPublished = this.isPublished;
         this.publishedOn = this.publishedOn;
+        this.isClosed = this.isClosed;
         this.closedOn = this.closedOn;
-        this.recordStatus = this.recordStatus;
+        this.startAt = this.startAt;
+        this.endAt = this.endAt;
+        this.publishedBy = this.publishedBy;
+        this.publishedById = this.publishedById;
+        this.closedBy = this.closedBy;
+        this.closedById = this.closedById;
+        this.createdBy = this.createdBy;
+        this.createdById = this.createdById;
         this.companyId = this.companyId;
-        this.publishToFaceIt = this.publishToFaceIt;
+        this.recordStatus = this.recordStatus;
+        this.jobAssignees = this.jobAssignees;
+        this.jobRatingParams = this.jobRatingParams;
     }
 
+}
+
+export class JobRatingParam {
+    id: string;
+    type: number;
+    title: string;
+    description: string;
+    mapid: string;
+
+    constructor(init?: Partial<JobRatingParam>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+        this.id = this.id;
+        this.type = this.type;
+        this.title = this.title;
+        this.description = this.description;
+        this.mapid = this.mapid;
+    }
+}
+
+export class JobAssign {
+    id: string;
+    assigneeId: string;
+    name: string;
+    email: string;
+    phone: string;
+    selected: boolean;
+
+    constructor(init?: Partial<JobAssign>) {
+        if (init) {
+            Object.assign(this, init);
+        }
+        this.id = this.id;
+        this.assigneeId = this.assigneeId;
+        this.name = this.name;
+        this.email = this.email;
+        this.phone = this.phone;
+        this.selected = this.selected
+    }
 }
 
 export class JobDetail {
@@ -58,29 +146,6 @@ export class JobDetail {
         this.jobSalaryRange = this.jobSalaryRange;
         this.status = this.status;
         this.jobId = this.jobId;
-    }
-}
-
-export class JobAssign {
-    jobAssignId: number;
-    jobId: number;
-    contactId: number;
-    name: string;
-    email: string;
-    phone: string;
-    selected: boolean;
-
-    constructor(init?: Partial<JobAssign>) {
-        if (init) {
-            Object.assign(this, init);
-        }
-        this.jobAssignId = this.jobAssignId;
-        this.jobId = this.jobId;
-        this.contactId = this.contactId;
-        this.name = this.name;
-        this.email = this.email;
-        this.phone = this.phone;
-        this.selected = this.selected;
     }
 }
 
