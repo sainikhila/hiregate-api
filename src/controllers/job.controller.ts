@@ -93,7 +93,8 @@ export class JobController extends BaseController {
 
         try {
             const user: any = (request as any).user;
-            return [];
+            const results = await this.jobService.getJobInfo(user.companyId);
+            return this.sendResponse(ResponseCode.Success, "Company jobs are retrieved successfully", results);
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
@@ -145,7 +146,9 @@ export class JobController extends BaseController {
 
         try {
 
-            return [];
+            const results = await this.jobService.getJobFullDetails(jobId);
+
+            return this.sendResponse(ResponseCode.Success, "All active company users are retrieved successfully", results);
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);

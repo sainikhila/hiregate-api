@@ -24,6 +24,8 @@ export default interface IJobService {
     getAllActiveCompanyUser(companyId: string | undefined, userTypeId: number): Promise<ShortUser[]>;
     createNewJob(job: Job): Promise<void>;
     getAllJobHeaders(companyId: string): Promise<Job[]>;
+    getJobInfo(companyId: string): Promise<Job[]>;
+    getJobFullDetails(id: string | unknown): Promise<Job>;
 }
 
 @injectable()
@@ -150,6 +152,27 @@ export class JobService implements IJobService {
             newItems.push(this.helper.convertTo<IJobSchema, Job>(jobSchema, new Job()));
         });
 
+        return newItems;
+    }
+
+    public async getJobInfo(companyId: string): Promise<Job[]> {
+        const fields = { _id: 1, jobId: 1, description: 1 };
+        let jobSchemas: IJobSchema[] = await this.jobRepository.getJobsByCompany(companyId, fields);
+
+        let newItems: Job[] = [];
+
+        jobSchemas.forEach((jobSchema) => {
+            newItems.push(this.helper.convertTo<IJobSchema, Job>(jobSchema, new Job()));
+        });
+
+        return newItems;
+    }
+
+    public async getJobFullDetails(id: string): Promise<Job> {
+        let jobSchema: IJobSchema = await this.jobRepository.get(id);
+
+        let newItems: Job = {} as Job;
+        newItems = this.helper.convertTo<IJobSchema, Job>(jobSchema, new Job())
         return newItems;
     }
 }

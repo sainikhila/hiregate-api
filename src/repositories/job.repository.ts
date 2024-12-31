@@ -29,7 +29,7 @@ export interface IJobRepository {
      * @param session - The client session for the operation, if any.
      * @returns A promise that resolves to an array of job schemas.
      */
-    gets(session: ClientSession | undefined): Promise<IJobSchema[]>;
+    gets(): Promise<IJobSchema[]>;
 
     /**
      * Retrieves a job by its ID.
@@ -37,7 +37,7 @@ export interface IJobRepository {
      * @param session - The client session for the operation, if any.
      * @returns A promise that resolves to the job schema.
      */
-    get(_id: string, session: ClientSession | undefined): Promise<IJobSchema>;
+    get(_id: string): Promise<IJobSchema>;
 
     /**
      * Updates a job in the repository.
@@ -56,6 +56,8 @@ export interface IJobRepository {
     delete(_id: string, session: ClientSession | undefined): Promise<void>;
 
     getAllJobHeaders(companyId: string): Promise<IJobSchema[]>;
+
+    getJobsByCompany(companyId: string | unknown, fields: {}): Promise<IJobSchema[]>;
 }
 
 /**
@@ -115,15 +117,34 @@ export class JobRepository implements IJobRepository {
      * @param session - The database session.
      * @returns A promise that resolves to an array of job data.
      */
-    public async gets(session: ClientSession | undefined): Promise<IJobSchema[]> {
+    public async gets(): Promise<IJobSchema[]> {
 
-        return await JobSchema.find({}, { __v: 0 }, { session })
+        return await JobSchema.find({}, { __v: 0 })
             .then((data: any) => {
                 let results = this.helper.GetItemFromArray(data, -1, []);
                 return results as IJobSchema[];
             })
             .catch((error: Error) => {
-                DbSession.Abort(session);
+                throw error;
+            });
+
+    }
+
+    /**
+     * Retrieves all jobs from the database.
+     * @param session - The database session.
+     * @returns A promise that resolves to an array of job data.
+     */
+    public async getJobsByCompany(companyId: string | unknown, fields: {}): Promise<IJobSchema[]> {
+
+        const rFields = fields || { __v: 0 };
+
+        return await JobSchema.find({ companyId }, { ...rFields })
+            .then((data: any) => {
+                let results = this.helper.GetItemFromArray(data, -1, []);
+                return results as IJobSchema[];
+            })
+            .catch((error: Error) => {
                 throw error;
             });
 
@@ -135,15 +156,14 @@ export class JobRepository implements IJobRepository {
      * @param session - The database session.
      * @returns A promise that resolves to the job data.
      */
-    public async get(_id: string, session: ClientSession | undefined): Promise<IJobSchema> {
+    public async get(_id: string): Promise<IJobSchema> {
 
-        return await JobSchema.find({ _id }, { __v: 0 }, { session })
+        return await JobSchema.find({ _id }, { __v: 0 })
             .then((data: any) => {
                 let results = this.helper.GetItemFromArray(data, 0, {});
                 return results as IJobSchema;
             })
             .catch((error: Error) => {
-                DbSession.Abort(session);
                 throw error;
             });
 
@@ -173,7 +193,7 @@ export class JobRepository implements IJobRepository {
      */
     public async delete(_id: string, session: ClientSession | undefined): Promise<void> {
 
-        let input: IJobSchema = await this.get(_id, session);
+        let input: IJobSchema = await this.get(_id);
         input.recordStatus = 3;
 
         await JobSchema.updateOne([input], { session })
