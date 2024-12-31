@@ -2,7 +2,6 @@ const Types = require('mongoose').Types;
 import { provideSingleton } from "../utils/provideSingleton";
 import mongoose from 'mongoose';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { Snowflake } from 'node-snowflake';
 
 @provideSingleton(Helper)
 export default class Helper {
@@ -39,10 +38,6 @@ export default class Helper {
     public TimeStamp(): string {
         return new Date().valueOf().toString();
     };
-
-    public UniqueId(): string {
-        return Snowflake.nextId();
-    }
 
     public IsArrayNull(e: any): Boolean {
         if (this.IsNull(e)) return true;

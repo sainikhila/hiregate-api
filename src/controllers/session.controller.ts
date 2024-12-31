@@ -71,7 +71,7 @@ export class SessionController extends BaseController {
 
         try {
 
-            return this.helper.UniqueId();
+            return [];
 
         } catch (ex: any) {
             return this.sendResponse(ResponseCode.BadRequest, ex.message, null);
